@@ -2,7 +2,7 @@
 #include "utils.hpp"
 
 #include <iostream>
-#include <filesystem>
+#include <fstream>
 
 const char* kInputFileLongArg = "--input";
 const char* kInputFileShortArg = "-i";
@@ -79,7 +79,7 @@ std::optional<ParametersParseError> ParseOption(
         return std::nullopt;
     }
 
-    std::expected<int64_t, const char*> number = ParseInt<uint64_t>(raw_value);
+    std::expected<int64_t, const char*> number = ParseNumber<uint64_t>(raw_value);
 
     if (!number.has_value()) {
         return ParametersParseError("Cannot parse integer value", argument_name.data());
@@ -101,12 +101,16 @@ std::optional<ParametersParseError> ValidateParameters(const Parameters& paramet
         return std::nullopt;
     }
 
-    if (parameters.input_file != nullptr && !std::filesystem::exists(parameters.input_file)) {
-        return ParametersParseError("Cannot find input file");
-    } else if (parameters.input_file == nullptr) {
+    if (parameters.input_file == nullptr) {
         return ParametersParseError("No input file is specified");
     } else if (parameters.output_directory == nullptr) {
         return ParametersParseError("No output directory is specified");
+    }
+    
+    std::fstream file(parameters.input_file);
+
+    if (!file.good()) {
+        return ParametersParseError("Input file can't be opened");
     }
 
     return std::nullopt;

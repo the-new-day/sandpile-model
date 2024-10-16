@@ -1,6 +1,9 @@
-#include <iostream>
+#include "parsing/argparsing.hpp"
+#include "parsing/tsv_parsing.hpp"
+#include "model/Sandpile.hpp"
 
-#include "argparsing.hpp"
+#include <iostream>
+#include <fstream>
 
 int main(int argc, char** argv){
     if (argc < 2) {
@@ -12,12 +15,12 @@ int main(int argc, char** argv){
     if (!params.has_value()) {
         ParametersParseError error = params.error();
 
-        std::cerr << "An error occured while parsing arguments:\n" << error.message;
+        std::cout << "An error occured while parsing arguments:\n" << error.message << std::endl;
         if (error.argument != nullptr) {
-            std::cerr << '\n' << error.argument;
+            std::cerr << error.argument << std::endl;
         }
 
-        std::cout << "\nUse --help to see information about supported commands";
+        std::cout << "Use --help to see information about supported commands";
 
         return EXIT_FAILURE;
     }
@@ -27,15 +30,25 @@ int main(int argc, char** argv){
         return EXIT_SUCCESS;
     }
 
-    std::cout << params->state_saving_frequency;
-
-    // std::optional<const char*> analyzing_error = AnalyzeLog(params.value());
+    Grid grid;
+    std::optional<TsvParsingError> tsv_parsing_result = FillGrid(grid, params->input_file);
     
-    // if (analyzing_error.has_value()) {
-    //     std::cerr << "An error occured while analyzing the file:\n" << analyzing_error.value();
+    if (tsv_parsing_result.has_value()) {
+        std::cout << "An error occured while processing the tsv file:" << std::endl;
+        std::cerr << tsv_parsing_result.value().message;
 
-    //     return EXIT_FAILURE;
-    // }
+        return EXIT_FAILURE;
+    }
+
+    Sandpile sandpile(grid, *params);
+    std::optional<const char*> run_result = sandpile.Run();
+
+    if (run_result.has_value()) {
+        std::cout << "An error occured while running the model:" << std::endl;
+        std::cerr << run_result.value();
+        
+        return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
 }

@@ -1,11 +1,14 @@
 #pragma once
 
+#include "model/Grid.hpp"
+
 #include <expected>
+#include <optional>
 #include <string_view>
 #include <charconv>
 
 template<typename T>
-std::expected<T, const char*> ParseInt(std::string_view str) {
+std::expected<T, const char*> ParseNumber(std::string_view str) {
     T result;
     std::from_chars_result convertion_result = std::from_chars(str.data(), str.data() + str.size(), result);
 
