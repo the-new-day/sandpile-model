@@ -1,4 +1,5 @@
 #include "model/Sandpile.hpp"
+#include "bmp/BmpWriter.hpp"
 
 #include <iostream>
 
