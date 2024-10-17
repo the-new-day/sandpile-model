@@ -2,6 +2,7 @@
 #include "parsing/utils.hpp"
 
 #include <fstream>
+#include <iostream>
 
 const uint8_t kMaxUint64DecimalLength = 20;
 const uint8_t kLineBufferSize = 64; // kMaxUint64DecimalLength * 3 + 3 '\t' + '\0'
@@ -32,10 +33,10 @@ std::optional<TsvParsingError> FillGrid(Grid& grid, const char* input_file_name)
         }
 
         std::string_view raw_x = line.substr(0, line.find('\t'));
-        line = line.substr(line.find('\t'));
+        line = line.substr(line.find('\t') + 1);
 
         std::string_view raw_y = line.substr(0, line.find('\t'));
-        std::string_view raw_sand = line.substr(line.find('\t'));
+        std::string_view raw_sand = line.substr(line.find('\t') + 1);
 
         std::expected<int16_t, const char*> x = ParseNumber<int16_t>(raw_x);
         if (!x.has_value()) {

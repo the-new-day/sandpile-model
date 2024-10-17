@@ -37,15 +37,19 @@ std::expected<Parameters, ParametersParseError> ParseArguments(int argc, char** 
 
         std::string_view raw_value;
         std::string_view argument_name;
-
-        if (!argument.contains('=') && i == argc - 1) {
-            return std::unexpected{ParametersParseError(kMissingArgumentMsg)};
-        }
         
         if (argument.contains('=')) {
-            raw_value = argument.substr(argument.find('='));
+            raw_value = argument.substr(argument.find('=') + 1);
             argument_name = argument.substr(0, argument.find('='));
+        } else if (argument.length() > 2 && argument[1] != '-') {
+            // arguments like "-f3" (-f 3, --freq=3 etc.)
+            raw_value = argument.substr(2);
+            argument_name = argument.substr(0, 2);
         } else {
+            if (i == argc - 1) {
+                return std::unexpected{ParametersParseError(kMissingArgumentMsg)};
+            }
+
             raw_value = std::string_view{argv[++i]};
             argument_name = argument;
         }
