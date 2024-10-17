@@ -34,18 +34,18 @@ int main(int argc, char** argv){
     std::optional<TsvParsingError> tsv_parsing_result = FillGrid(grid, params->input_file);
     
     if (tsv_parsing_result.has_value()) {
-        std::cout << "An error occured while processing the tsv file:" << std::endl;
+        std::cout << "An error occured while processing the input file:" << std::endl;
         std::cerr << tsv_parsing_result.value().message;
 
         return EXIT_FAILURE;
     }
 
     Sandpile sandpile(grid, *params);
-    std::optional<const char*> run_result = sandpile.Run();
+    std::optional<SandpileError> run_result = sandpile.Run();
 
     if (run_result.has_value()) {
         std::cout << "An error occured while running the model:" << std::endl;
-        std::cerr << run_result.value();
+        std::cerr << run_result.value().message;
         
         return EXIT_FAILURE;
     }
