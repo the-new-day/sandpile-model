@@ -122,19 +122,19 @@ std::optional<ParametersParseError> ValidateParameters(const Parameters& paramet
 
 std::expected<const char*, const char*> GetParameterInfo(std::string_view parameter) {
     if (parameter == kInputFileLongArg || parameter == kInputFileShortArg) {
-        return "--input=<amount> | -i <amount>           [string]                 "
+        return "--input=<path> | -i <path>        [string]                 "
             "Path to the .tsv file with the sandpile initial state";
     } else if (parameter == kOutputDirectoryLongArg || parameter == kOutputDirectoryShortArg) {
-        return "--output=<seconds> | -o <second>         [string]                 "
-            "Path to the directory where to save states of the sandpile";
+        return "--output=<path> | -o <path>       [string]                 "
+            "Path to the directory where to save states of the sandpile (including the separator sign!)";
     } else if (parameter == kMaxIterLongArg || parameter == kMaxIterShortArg) {
-        return "--max-iter=<timestamp> | -m <timestamp>  [int, >= 0, default=inf] "
+        return "--max-iter=<n> | -m <n>           [int, >= 0, default=inf] "
             "Maximal amount of iterations.";
     } else if (parameter == kFrequencyLongArg || parameter == kFrequencyShortArg) {
-        return "--freq=<timestamp> | -f <timestamp>      [int, >= 0, default=0]   "
+        return "--freq=<n> | -f <n>               [int, >= 0, default=0]   "
             "Frequency of states to save. If zero, only the final state is saved";
     } else if (parameter == kHelpLongArg || parameter == kHelpShortArg) {
-        return "--help | -h                              [flag]                   "
+        return "--help | -h                       [flag]                   "
             "Show help and exit";
     }
 

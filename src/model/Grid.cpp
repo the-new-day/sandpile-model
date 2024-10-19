@@ -120,8 +120,6 @@ Grid& Grid::operator=(const Grid& other) {
     min_x_ = other.min_x_;
     min_y_ = other.min_y_;
 
-    uint64_t other_size = static_cast<uint64_t>(other.width_) * other.height_;
-
     sand_ = new uint64_t*[other.height_];
     for (size_t y = 0; y < other.height_; ++y) {
         sand_[y] = new uint64_t[other.width_];
@@ -132,7 +130,16 @@ Grid& Grid::operator=(const Grid& other) {
 }
 
 Grid::Grid(const Grid& other) {
-    *this = other;
+    width_ = other.width_;
+    height_ = other.height_;
+    min_x_ = other.min_x_;
+    min_y_ = other.min_y_;
+
+    sand_ = new uint64_t*[other.height_];
+    for (size_t y = 0; y < other.height_; ++y) {
+        sand_[y] = new uint64_t[other.width_];
+        std::copy(other.sand_[y], other.sand_[y] + other.width_, sand_[y]);
+    }
 }
 
 void Grid::DeleteGrid() {

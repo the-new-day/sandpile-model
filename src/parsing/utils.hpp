@@ -1,7 +1,5 @@
 #pragma once
 
-#include "model/Grid.hpp"
-
 #include <expected>
 #include <optional>
 #include <string_view>

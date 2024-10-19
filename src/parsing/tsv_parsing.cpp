@@ -49,7 +49,7 @@ std::optional<TsvParsingError> FillGrid(Grid& grid, const char* input_file_name)
         }
 
         std::expected<uint64_t, const char*> sand = ParseNumber<uint64_t>(raw_sand);
-        if (!x.has_value()) {
+        if (!sand.has_value()) {
             return TsvParsingError{sand.error()};
         }
 

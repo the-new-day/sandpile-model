@@ -3,7 +3,6 @@
 #include "model/Sandpile.hpp"
 
 #include <iostream>
-#include <fstream>
 
 int main(int argc, char** argv){
     if (argc < 2) {
@@ -40,15 +39,22 @@ int main(int argc, char** argv){
         return EXIT_FAILURE;
     }
 
-    Sandpile sandpile(grid, *params);
-    std::optional<SandpileError> run_result = sandpile.Run();
+    Sandpile sandpile(grid);
+    sandpile.SetOutputDirectory(params->output_directory);
 
-    if (run_result.has_value()) {
+    std::expected<uint64_t, SandpileError> run_result 
+        = sandpile.Run(params->max_iterations, params->state_saving_frequency);
+
+    if (!run_result.has_value()) {
         std::cout << "An error occured while running the model:" << std::endl;
-        std::cerr << run_result.value().message;
+        std::cerr << run_result.error().message << std::endl;
         
         return EXIT_FAILURE;
     }
+
+    sandpile.SaveStateToGrid(grid);
+    std::cout << "Final grid size: " << grid.GetWidth() << 'x' << grid.GetHeight() << std::endl;
+    std::cout << "Calculation took " << run_result.value() << " topplings" << std::endl;
 
     return EXIT_SUCCESS;
 }
