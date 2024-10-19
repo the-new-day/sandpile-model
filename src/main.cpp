@@ -47,6 +47,8 @@ int main(int argc, char** argv){
 
     Sandpile sandpile(grid);
     sandpile.SetOutputDirectory(params->output_directory);
+    sandpile.SetOutputFilePrefix(params->output_file_prefix);
+    sandpile.SetOutputFileExtension(params->output_file_extension);
 
     std::expected<uint64_t, SandpileError> run_result 
         = sandpile.Run(params->max_iterations, params->state_saving_frequency);

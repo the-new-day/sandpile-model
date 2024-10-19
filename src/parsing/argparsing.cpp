@@ -15,6 +15,10 @@ const char* kFrequencyLongArg = "--freq";
 const char* kFrequencyShortArg = "-f";
 const char* kHelpLongArg = "--help";
 const char* kHelpShortArg = "-h";
+const char* kOutputFilePrefixLongArg = "--output-prefix";
+const char* kOutputFilePrefixShortArg = "-p";
+const char* kOutputFileExtensionLongArg = "--output-extension";
+const char* kOutputFileExtensionShortArg = "-e";
 
 const char* kMissingArgumentMsg = "Unspecified argument value (unexpected end of argument sequence)";
 
@@ -82,6 +86,12 @@ std::optional<ParametersParseError> ParseOption(
     } else if (argument_name == kOutputDirectoryLongArg || argument_name == kOutputDirectoryShortArg) {
         parameters.output_directory = raw_value.data();
         return std::nullopt;
+    } else if (argument_name == kOutputFilePrefixLongArg || argument_name == kOutputFilePrefixShortArg) {
+        parameters.output_file_prefix = raw_value.data();
+        return std::nullopt;
+    } else if (argument_name == kOutputFileExtensionLongArg || argument_name == kOutputFileExtensionShortArg) {
+        parameters.output_file_extension = raw_value.data();
+        return std::nullopt;
     }
 
     std::expected<uint64_t, const char*> number = ParseNumber<uint64_t>(raw_value);
@@ -123,20 +133,26 @@ std::optional<ParametersParseError> ValidateParameters(const Parameters& paramet
 
 std::expected<const char*, const char*> GetParameterInfo(std::string_view parameter) {
     if (parameter == kInputFileLongArg || parameter == kInputFileShortArg) {
-        return "--input=<path> | -i <path>        [string]                 "
+        return "--input=<path> | -i <path>              [string]                        "
             "Path to the .tsv file with the sandpile initial state";
     } else if (parameter == kOutputDirectoryLongArg || parameter == kOutputDirectoryShortArg) {
-        return "--output=<path> | -o <path>       [string]                 "
-            "Path to the directory where to save states of the sandpile (including the separator sign!)";
+        return "--output=<path> | -o <path>             [string]                        "
+            "Path to the directory where to save states of the sandpile (including the directory separator)";
     } else if (parameter == kMaxIterLongArg || parameter == kMaxIterShortArg) {
-        return "--max-iter=<n> | -m <n>           [int, >= 0, default=inf] "
-            "Maximal amount of iterations.";
+        return "--max-iter=<n> | -m <n>                 [int, >= 0, default=0]          "
+            "Maximal amount of iterations. If zero, the model runs until the grid is stable";
     } else if (parameter == kFrequencyLongArg || parameter == kFrequencyShortArg) {
-        return "--freq=<n> | -f <n>               [int, >= 0, default=0]   "
-            "Frequency of states to save. If zero, only the final state is saved";
+        return "--freq=<n> | -f <n>                     [int, >= 0, default=0]          "
+            "Frequency of saving the intermediate states. If zero, only the final state is saved";
     } else if (parameter == kHelpLongArg || parameter == kHelpShortArg) {
-        return "--help | -h                       [flag]                   "
+        return "--help | -h                             [flag]                          "
             "Show help and exit";
+    } else if (parameter == kOutputFilePrefixLongArg || parameter == kOutputFilePrefixShortArg) {
+        return "--output-prexif=<prefix> | -p <prefix>  [string, default=sandpile_]     "
+            "Prexif for output files";
+    } else if (parameter == kOutputFileExtensionLongArg || parameter == kOutputFileExtensionShortArg) {
+        return "--output-extension=<ext> | -e <ext>     [string, default=.bmp]          "
+            "Extension for output files (only an addition to the filename)";
     }
 
     return std::unexpected{"Cannot get parameter info: unknown parameter"};
@@ -149,5 +165,7 @@ void ShowHelpMessage() {
     std::cout << *GetParameterInfo(kOutputDirectoryShortArg) << std::endl << '\t';
     std::cout << *GetParameterInfo(kMaxIterShortArg) << std::endl << '\t';
     std::cout << *GetParameterInfo(kFrequencyShortArg) << std::endl << '\t';
+    std::cout << *GetParameterInfo(kOutputFilePrefixShortArg) << std::endl << '\t';
+    std::cout << *GetParameterInfo(kOutputFileExtensionShortArg) << std::endl << '\t';
     std::cout << *GetParameterInfo(kHelpShortArg) << std::endl << '\t';
 }

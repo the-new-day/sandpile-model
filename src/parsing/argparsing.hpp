@@ -11,6 +11,9 @@ struct Parameters {
     uint64_t max_iterations = 0;
     uint64_t state_saving_frequency = 0;
 
+    const char* output_file_prefix = "sandpile_";
+    const char* output_file_extension = ".bmp";
+
     bool need_help = false;
 };
 
