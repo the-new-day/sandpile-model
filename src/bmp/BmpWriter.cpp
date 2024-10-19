@@ -2,6 +2,8 @@
 
 #include <fstream>
 
+#include <iostream>
+
 std::optional<BmpWriterError> BmpWriter::Save(const char* path) const {
     if (color_table_size_ < 2) {
         return BmpWriterError{"Unable to create a bmp file: color table size must be at least 2"};
@@ -41,15 +43,17 @@ std::optional<BmpWriterError> BmpWriter::Save(const char* path) const {
 
     char* current_row = new char[GetRowByteSize()];
     uint64_t current_bit_in_row = 0;
-
+    
     for (size_t y = 0; y < height_; ++y) {
         std::fill(current_row, current_row + GetRowByteSize(), 0);
 
         for (size_t x = 0; x < width_; ++x) {
             uint32_t color_table_index = pixel_table_indeces_[y * width_ + x];
+            
+            
 
             for (int32_t shift = GetBitCount() - 1; shift >= 0; --shift) {
-                uint8_t current_byte_in_row = current_bit_in_row / 8;
+                uint64_t current_byte_in_row = current_bit_in_row / 8;
                 uint8_t current_color_index_bit = (color_table_index >> shift) & 1;
 
                 current_row[current_byte_in_row] |= current_color_index_bit << (7 - current_bit_in_row % 8);
