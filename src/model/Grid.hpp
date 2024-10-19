@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <expected>
 
 class Grid {
 public:
@@ -27,8 +26,7 @@ public:
 
     bool IsEmpty() const;
 
-    // TODO: remove
-    void PrintGrid() const;
+    bool HasCell(int16_t x, int16_t y) const;
 
 private:
     uint64_t** sand_ = nullptr;
@@ -40,8 +38,5 @@ private:
     int16_t min_y_ = 0;
 
     void Expand(uint32_t to_left, uint32_t to_top, uint32_t to_right, uint32_t to_bottom);
-
-    bool HasCell(int16_t x, int16_t y) const;
-
-    void DeleteGrid();
+    void Reset();
 };

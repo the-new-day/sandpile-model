@@ -47,7 +47,6 @@ private:
     uint32_t height_;
     uint8_t color_table_size_;
 
-    #pragma pack(push, 2)
     struct BitmapHeader {
         /* BITMAPFILEHEADER */
         uint16_t bf_type;
@@ -69,7 +68,6 @@ private:
         uint32_t bi_clr_used;
         uint32_t bi_clr_important;
     };
-    #pragma pack(pop)
 
     void WriteHeader(std::ofstream& file, const BitmapHeader& header) const;
 

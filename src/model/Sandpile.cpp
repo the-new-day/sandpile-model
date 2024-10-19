@@ -1,8 +1,9 @@
 #include "model/Sandpile.hpp"
 
 #include <cstring>
+#include <cstddef>
 
-Sandpile::Sandpile(const Grid& initial_grid) : grid_(initial_grid) {}
+Sandpile::Sandpile(Grid& grid) : grid_(grid) {}
 
 std::optional<SandpileError> Sandpile::SaveCurrentState(const char* filename) const {
     if (output_directory_ == nullptr) {
@@ -115,8 +116,10 @@ std::expected<uint64_t, SandpileError> Sandpile::Run(uint64_t max_iterations, ui
 
         if (state_saving_frequency == 0 && max_iterations == 0) {
             FullyToppleGrid();
+        } else if (output_directory_ == nullptr || state_saving_frequency == 0) {
+            ToppleGrid();
         } else {
-            if (state_saving_frequency != 0 && amount_of_iterations % state_saving_frequency == 0) {
+            if (amount_of_iterations % state_saving_frequency == 0) {
                 // max length of size_t (decimal) is 20
                 size_t filename_length = std::strlen(output_file_prefix_) + 20 + std::strlen(output_file_extension_) + 1;
                 char* filename = new char[filename_length];
@@ -137,15 +140,17 @@ std::expected<uint64_t, SandpileError> Sandpile::Run(uint64_t max_iterations, ui
         ++amount_of_iterations;
     }
 
-    size_t filename_length = std::strlen(output_file_prefix_) + 5 + std::strlen(output_file_extension_) + 1;
-    char* filename = new char[filename_length];
-    std::sprintf(filename, "%sfinal%s", output_file_prefix_, output_file_extension_);
+    if (output_directory_ != nullptr) {
+        size_t filename_length = std::strlen(output_file_prefix_) + 5 + std::strlen(output_file_extension_) + 1;
+        char* filename = new char[filename_length];
+        std::sprintf(filename, "%sfinal%s", output_file_prefix_, output_file_extension_);
 
-    std::optional<SandpileError> saving_result = SaveCurrentState(filename);
-    delete[] filename;
+        std::optional<SandpileError> saving_result = SaveCurrentState(filename);
+        delete[] filename;
 
-    if (saving_result.has_value()) {
-        return std::unexpected{saving_result.value()};
+        if (saving_result.has_value()) {
+            return std::unexpected{saving_result.value()};
+        }
     }
 
     return amount_of_iterations;

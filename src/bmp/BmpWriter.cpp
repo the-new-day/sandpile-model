@@ -18,7 +18,7 @@ std::optional<BmpWriterError> BmpWriter::Save(const char* path) const {
     header.bf_size = GetFileSize();
     header.bf_reserved1 = 0;
     header.bf_reserved2 = 0;
-    header.bf_off_bits = sizeof(BitmapHeader) + GetColorTableByteSize();
+    header.bf_off_bits = GetColorTableByteSize() + 54; // 54 == 14 (BITMAPFILEHEADER) + 40 (BITMAPINFO)
 
     header.bi_size = 40;
     header.bi_width = width_;
@@ -140,7 +140,6 @@ std::optional<BmpWriterError> BmpWriter::SetPixel(uint32_t x, uint32_t y, uint8_
     }
 
     pixel_table_indeces_[pixel_index] = color_table_index;
-
     return std::nullopt;
 }
 
@@ -150,7 +149,6 @@ std::optional<BmpWriterError> BmpWriter::SetColor(uint32_t table_index, Color co
     }
 
     color_table_[table_index] = color;
-
     return std::nullopt;
 }
 
@@ -185,19 +183,21 @@ BmpWriter& BmpWriter::operator=(const BmpWriter& other) {
         return *this;
     }
 
-    delete[] color_table_;
-    delete[] pixel_table_indeces_;
-
-    color_table_ = new Color[other.color_table_size_];
-    std::copy(other.color_table_, other.color_table_ + other.color_table_size_, color_table_);
+    Color* new_color_table = new Color[other.color_table_size_];
+    std::copy(other.color_table_, other.color_table_ + other.color_table_size_, new_color_table);
 
     uint64_t pixel_data_size = static_cast<uint64_t>(other.width_) * other.height_;
-    pixel_table_indeces_ = new uint32_t[pixel_data_size];
-    std::copy(other.pixel_table_indeces_, other.pixel_table_indeces_ + pixel_data_size, pixel_table_indeces_);
+    uint32_t* new_pixel_table_indeces = new uint32_t[pixel_data_size];
+    std::copy(other.pixel_table_indeces_, other.pixel_table_indeces_ + pixel_data_size, new_pixel_table_indeces);
+
+    delete[] color_table_;
+    delete[] pixel_table_indeces_;
 
     width_ = other.width_;
     height_ = other.height_;
     color_table_size_ = other.color_table_size_;
+    color_table_ = new_color_table;
+    pixel_table_indeces_ = new_pixel_table_indeces;
 
     return *this;
 }

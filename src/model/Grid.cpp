@@ -1,7 +1,7 @@
 #include "model/Grid.hpp"
 #include "parsing/utils.hpp"
 
-#include <iostream>
+#include <cstddef>
 
 void Grid::Expand(uint32_t to_left, uint32_t to_top, uint32_t to_right, uint32_t to_bottom) {
     if (to_left == 0 && to_top == 0 && to_right == 0 && to_bottom == 0) {
@@ -23,7 +23,7 @@ void Grid::Expand(uint32_t to_left, uint32_t to_top, uint32_t to_right, uint32_t
         }
     }
 
-    DeleteGrid();
+    Reset();
 
     width_ = new_width;
     height_ = new_height;
@@ -79,18 +79,6 @@ void Grid::SetSand(int16_t x, int16_t y, uint64_t sand) {
     sand_[y][x] = sand;
 }
 
-// TODO: remove (created for debug)
-void Grid::PrintGrid() const {
-    for (int16_t y = height_ - 1; y >= 0; --y) {
-        for (int16_t x = 0; x < width_; ++x) {
-            std::cout << sand_[y][x] << ' ';
-        }
-        std::cout << '\n';
-    }
-
-    std::cout << '\n';
-}
-
 void Grid::AddSand(int16_t x, int16_t y, uint64_t sand) {
     SetSand(x, y, GetSand(x, y) + sand);
 }
@@ -113,18 +101,23 @@ bool Grid::HasCell(int16_t x, int16_t y) const {
 }
 
 Grid& Grid::operator=(const Grid& other) {
-    DeleteGrid();
+    if (this == &other) {
+        return *this;
+    }
 
+    Reset();
+
+    uint64_t** new_sand = new uint64_t*[other.height_];
+    for (size_t y = 0; y < other.height_; ++y) {
+        new_sand[y] = new uint64_t[other.width_];
+        std::copy(other.sand_[y], other.sand_[y] + other.width_, new_sand[y]);
+    }
+
+    sand_ = new_sand;
     width_ = other.width_;
     height_ = other.height_;
     min_x_ = other.min_x_;
     min_y_ = other.min_y_;
-
-    sand_ = new uint64_t*[other.height_];
-    for (size_t y = 0; y < other.height_; ++y) {
-        sand_[y] = new uint64_t[other.width_];
-        std::copy(other.sand_[y], other.sand_[y] + other.width_, sand_[y]);
-    }
 
     return *this;
 }
@@ -142,7 +135,7 @@ Grid::Grid(const Grid& other) {
     }
 }
 
-void Grid::DeleteGrid() {
+void Grid::Reset() {
     for (size_t y = 0; y < height_; ++y) {
         delete[] sand_[y];
     }
@@ -153,7 +146,7 @@ void Grid::DeleteGrid() {
 }
 
 Grid::~Grid() {
-    DeleteGrid();
+    Reset();
 }
 
 uint32_t Grid::GetWidth() const {

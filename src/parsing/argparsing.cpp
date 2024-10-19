@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstddef>
 
 const char* kInputFileLongArg = "--input";
 const char* kInputFileShortArg = "-i";
@@ -47,7 +48,7 @@ std::expected<Parameters, ParametersParseError> ParseArguments(int argc, char** 
             argument_name = argument.substr(0, 2);
         } else {
             if (i == argc - 1) {
-                return std::unexpected{ParametersParseError(kMissingArgumentMsg)};
+                return std::unexpected{ParametersParseError{kMissingArgumentMsg}};
             }
 
             raw_value = std::string_view{argv[++i]};
@@ -83,10 +84,10 @@ std::optional<ParametersParseError> ParseOption(
         return std::nullopt;
     }
 
-    std::expected<int64_t, const char*> number = ParseNumber<uint64_t>(raw_value);
+    std::expected<uint64_t, const char*> number = ParseNumber<uint64_t>(raw_value);
 
     if (!number.has_value()) {
-        return ParametersParseError("Cannot parse integer value", argument_name.data());
+        return ParametersParseError{"Cannot parse integer value", argument_name.data(), raw_value.data()};
     }
 
     if (argument_name == kMaxIterLongArg || argument_name == kMaxIterShortArg) {
@@ -94,7 +95,7 @@ std::optional<ParametersParseError> ParseOption(
     } else if (argument_name == kFrequencyLongArg || argument_name == kFrequencyShortArg) {
         parameters.state_saving_frequency = number.value();
     } else {
-        return ParametersParseError("Unknown argument", argument_name.data());
+        return ParametersParseError{"Unknown argument", argument_name.data(), raw_value.data()};
     }
 
     return std::nullopt;
@@ -106,15 +107,15 @@ std::optional<ParametersParseError> ValidateParameters(const Parameters& paramet
     }
 
     if (parameters.input_file == nullptr) {
-        return ParametersParseError("No input file is specified");
+        return ParametersParseError{"No input file is specified"};
     } else if (parameters.output_directory == nullptr) {
-        return ParametersParseError("No output directory is specified");
+        return ParametersParseError{"No output directory is specified"};
     }
     
     std::fstream file(parameters.input_file);
 
     if (!file.good()) {
-        return ParametersParseError("Input file can't be opened");
+        return ParametersParseError{"Input file can't be opened", parameters.input_file};
     }
 
     return std::nullopt;

@@ -15,11 +15,9 @@ struct Parameters {
 };
 
 struct ParametersParseError {
-    ParametersParseError(const char* message, const char* argument = nullptr) 
-        : message{message}, argument{argument} {}
-
     const char* message = nullptr;
     const char* argument = nullptr;
+    const char* argument_value = nullptr;
 };
 
 std::expected<Parameters, ParametersParseError> ParseArguments(int argc, char** argv);

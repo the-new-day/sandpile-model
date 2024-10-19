@@ -23,7 +23,7 @@ std::optional<TsvParsingError> FillGrid(Grid& grid, const char* input_file_name)
                 return std::nullopt;
             }
 
-            return TsvParsingError{"The line is too long and cannot be processed"};
+            return TsvParsingError{"The line is too long and can't be processed"};
         }
 
         std::string_view line{line_buffer};

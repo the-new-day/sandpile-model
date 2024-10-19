@@ -19,6 +19,10 @@ int main(int argc, char** argv){
             std::cerr << error.argument << std::endl;
         }
 
+        if (error.argument_value != nullptr) {
+            std::cerr << error.argument_value << std::endl;
+        }
+
         std::cout << "Use --help to see information about supported commands";
 
         return EXIT_FAILURE;
@@ -52,7 +56,6 @@ int main(int argc, char** argv){
         return EXIT_FAILURE;
     }
 
-    sandpile.SaveStateToGrid(grid);
     std::cout << "Final grid size: " << grid.GetWidth() << 'x' << grid.GetHeight() << std::endl;
     std::cout << "Calculation took " << run_result.value() << " topplings" << std::endl;
 
