@@ -96,8 +96,8 @@ bool Grid::HasCell(int16_t x, int16_t y) const {
         return false;
     }
 
-    return (x >= min_x_ && x < min_x_ + static_cast<int16_t>(width_)) 
-        && (y >= min_y_ && y < min_y_ + static_cast<int16_t>(height_));
+    return (x >= min_x_ && x < min_x_ + static_cast<int64_t>(width_)) 
+        && (y >= min_y_ && y < min_y_ + static_cast<int64_t>(height_));
 }
 
 Grid& Grid::operator=(const Grid& other) {
@@ -123,16 +123,17 @@ Grid& Grid::operator=(const Grid& other) {
 }
 
 Grid::Grid(const Grid& other) {
+    uint64_t** new_sand = new uint64_t*[other.height_];
+    for (size_t y = 0; y < other.height_; ++y) {
+        new_sand[y] = new uint64_t[other.width_];
+        std::copy(other.sand_[y], other.sand_[y] + other.width_, new_sand[y]);
+    }
+
+    sand_ = new_sand;
     width_ = other.width_;
     height_ = other.height_;
     min_x_ = other.min_x_;
     min_y_ = other.min_y_;
-
-    sand_ = new uint64_t*[other.height_];
-    for (size_t y = 0; y < other.height_; ++y) {
-        sand_[y] = new uint64_t[other.width_];
-        std::copy(other.sand_[y], other.sand_[y] + other.width_, sand_[y]);
-    }
 }
 
 void Grid::Reset() {
@@ -166,9 +167,9 @@ int16_t Grid::GetMinY() const {
 }
 
 int16_t Grid::GetMaxX() const {
-    return min_x_ + width_ - 1;
+    return min_x_ + static_cast<int64_t>(width_) - 1;
 }
 
 int16_t Grid::GetMaxY() const {
-    return min_y_ + height_ - 1;
+    return min_y_ + static_cast<int64_t>(height_) - 1;
 }

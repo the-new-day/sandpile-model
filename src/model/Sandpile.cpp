@@ -3,6 +3,8 @@
 #include <cstring>
 #include <cstddef>
 
+#include <iostream>
+
 Sandpile::Sandpile(Grid& grid) : grid_(grid) {}
 
 std::optional<SandpileError> Sandpile::SaveCurrentState(const char* filename) const {
@@ -20,7 +22,7 @@ std::optional<SandpileError> Sandpile::SaveCurrentState(const char* filename) co
     for (int16_t y = grid_.GetMinX(); y <= grid_.GetMaxY(); ++y) {
         for (int16_t x = grid_.GetMinY(); x <= grid_.GetMaxX(); ++x) {
             uint64_t sand = grid_.GetSand(x, y);
-            SandColor color = (sand > critical_sand_number_) ? kBlack : SandColor(sand % critical_sand_number_);
+            SandColor color = (sand >= critical_sand_number_) ? kBlack : SandColor(sand % critical_sand_number_);
 
             bmp_writer.SetPixel(x - grid_.GetMinX(), y - grid_.GetMinX(), color);
         }

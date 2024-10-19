@@ -14,7 +14,9 @@ int main(int argc, char** argv){
     if (!params.has_value()) {
         ParametersParseError error = params.error();
 
-        std::cout << "An error occured while parsing arguments:\n" << error.message << std::endl;
+        std::cout << "An error occured while parsing arguments:" << std::endl;
+        std::cout << error.message << std::endl;
+
         if (error.argument != nullptr) {
             std::cerr << error.argument << std::endl;
         }
