@@ -3,8 +3,6 @@
 #include <cstring>
 #include <cstddef>
 
-#include <iostream>
-
 Sandpile::Sandpile(Grid& grid) : grid_(grid) {}
 
 std::optional<SandpileError> Sandpile::SaveCurrentState(const char* filename) const {
