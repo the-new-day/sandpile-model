@@ -50,8 +50,6 @@ std::optional<BmpWriterError> BmpWriter::Save(const char* path) const {
         for (size_t x = 0; x < width_; ++x) {
             uint32_t color_table_index = pixel_table_indeces_[y * width_ + x];
             
-            
-
             for (int32_t shift = GetBitCount() - 1; shift >= 0; --shift) {
                 uint64_t current_byte_in_row = current_bit_in_row / 8;
                 uint8_t current_color_index_bit = (color_table_index >> shift) & 1;

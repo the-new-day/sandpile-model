@@ -105,13 +105,13 @@ Grid& Grid::operator=(const Grid& other) {
         return *this;
     }
 
-    Reset();
-
     uint64_t** new_sand = new uint64_t*[other.height_];
     for (size_t y = 0; y < other.height_; ++y) {
         new_sand[y] = new uint64_t[other.width_];
         std::copy(other.sand_[y], other.sand_[y] + other.width_, new_sand[y]);
     }
+
+    Reset();
 
     sand_ = new_sand;
     width_ = other.width_;
