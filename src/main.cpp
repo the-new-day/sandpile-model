@@ -36,11 +36,12 @@ int main(int argc, char** argv){
     }
 
     Grid grid;
-    std::optional<TsvParsingError> tsv_parsing_result = FillGrid(grid, params->input_file);
+    std::optional<TsvParsingError> tsv_parsing_error = FillGrid(grid, params->input_file);
     
-    if (tsv_parsing_result.has_value()) {
+    if (tsv_parsing_error.has_value()) {
         std::cout << "An error occured while processing the input file:" << std::endl;
-        std::cerr << tsv_parsing_result.value().message;
+        std::cerr << tsv_parsing_error.value().message << std::endl;
+        std::cout << "On the line " << tsv_parsing_error.value().line << std::endl;
 
         return EXIT_FAILURE;
     }

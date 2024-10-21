@@ -14,22 +14,24 @@ std::optional<TsvParsingError> FillGrid(Grid& grid, const char* input_file_name)
     }
 
     char line_buffer[kLineBufferSize];
+    uint64_t current_line = 0;
 
     while (file.good()) {
         file.getline(line_buffer, kLineBufferSize);
+        ++current_line;
 
         if (file.fail()) {
             if (file.eof()) {
                 return std::nullopt;
             }
 
-            return TsvParsingError{"The line is too long and can't be processed"};
+            return TsvParsingError{"The line is too long and can't be processed", current_line};
         }
 
         std::string_view line{line_buffer};
 
         if (std::count(line.data(), line.data() + line.length(), '\t') != 2) {
-            return TsvParsingError{"The line doesn't contain exactly 2 tabs"};
+            return TsvParsingError{"The line doesn't contain exactly 2 tabs", current_line};
         }
 
         std::string_view raw_x = line.substr(0, line.find('\t'));
@@ -40,17 +42,17 @@ std::optional<TsvParsingError> FillGrid(Grid& grid, const char* input_file_name)
 
         std::expected<int16_t, const char*> x = ParseNumber<int16_t>(raw_x);
         if (!x.has_value()) {
-            return TsvParsingError{x.error()};
+            return TsvParsingError{x.error(), current_line};
         }
 
         std::expected<int16_t, const char*> y = ParseNumber<int16_t>(raw_y);
         if (!y.has_value()) {
-            return TsvParsingError{y.error()};
+            return TsvParsingError{y.error(), current_line};
         }
 
         std::expected<uint64_t, const char*> sand = ParseNumber<uint64_t>(raw_sand);
         if (!sand.has_value()) {
-            return TsvParsingError{sand.error()};
+            return TsvParsingError{sand.error(), current_line};
         }
 
         grid.SetSand(x.value(), y.value(), sand.value());
