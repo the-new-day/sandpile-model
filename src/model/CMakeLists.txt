@@ -1,1 +1,1 @@
-add_library(model Grid.cpp Grid.hpp Sandpile.cpp Sandpile.hpp)
+add_library(model Grid.cpp Sandpile.cpp)

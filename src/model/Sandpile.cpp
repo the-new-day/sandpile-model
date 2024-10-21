@@ -17,12 +17,12 @@ std::optional<SandpileError> Sandpile::SaveCurrentState(const char* filename) co
     bmp_writer.SetColor(SandColor::kPurple, kPurpleRGB);
     bmp_writer.SetColor(SandColor::kYellow, kYellowRGB);
 
-    for (int16_t y = grid_.GetMinX(); y <= grid_.GetMaxY(); ++y) {
-        for (int16_t x = grid_.GetMinY(); x <= grid_.GetMaxX(); ++x) {
+    for (int16_t y = grid_.GetMinY(); y <= grid_.GetMaxY(); ++y) {
+        for (int16_t x = grid_.GetMinX(); x <= grid_.GetMaxX(); ++x) {
             uint64_t sand = grid_.GetSand(x, y);
             SandColor color = (sand >= critical_sand_number_) ? kBlack : SandColor(sand % critical_sand_number_);
 
-            bmp_writer.SetPixel(x - grid_.GetMinX(), y - grid_.GetMinX(), color);
+            bmp_writer.SetPixel(x - grid_.GetMinX(), y - grid_.GetMinY(), color);
         }
     }
 

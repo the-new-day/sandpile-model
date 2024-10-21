@@ -1,1 +1,1 @@
-add_library(bmp BmpWriter.hpp BmpWriter.cpp)
+add_library(bmp BmpWriter.cpp)
