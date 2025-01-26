@@ -148,7 +148,7 @@ std::expected<const char*, const char*> GetParameterInfo(std::string_view parame
         return "--help | -h                             [flag]                          "
             "Show help and exit";
     } else if (parameter == kOutputFilePrefixLongArg || parameter == kOutputFilePrefixShortArg) {
-        return "--output-prexif=<prefix> | -p <prefix>  [string, default=sandpile_]     "
+        return "--output-prefix=<prefix> | -p <prefix>  [string, default=sandpile_]     "
             "Prexif for output files";
     } else if (parameter == kOutputFileExtensionLongArg || parameter == kOutputFileExtensionShortArg) {
         return "--output-extension=<ext> | -e <ext>     [string, default=.bmp]          "
